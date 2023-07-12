@@ -427,6 +427,7 @@ GameObject:
   - component: {fileID: 384747366}
   - component: {fileID: 384747369}
   - component: {fileID: 384747370}
+  - component: {fileID: 384747371}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -483,16 +484,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 384747369}
+  playerController: {fileID: 384747371}
   defaultSpeed: 4
-  speed: 4
   sprintSpeed: 8
   crouchSpeed: 2
+  crouchHeight: 1
   gravity: -15
+  speed: 4
+  defaultHeight: 2
   groundCheck: {fileID: 174316259}
   groundDistance: 0.4
   groundMask:
     serializedVersion: 2
     m_Bits: 8
+--- !u!114 &384747371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384747365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ea10c3e3a4ce349912012e4a18b054, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementController: {fileID: 384747370}
+  cameraController: {fileID: 630784940}
+  charController: {fileID: 384747369}
+  groundCheck: {fileID: 174316258}
+  mainCamera: {fileID: 963194227}
 --- !u!1 &630784938
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,6 +560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14ae50c5591a8164aafd5ec74b7937d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 384747371}
   mouseSen: 1000
   rotAmount: 2
   camAnim: {fileID: 630784941}
