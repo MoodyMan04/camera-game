@@ -12,16 +12,10 @@ namespace PlayerScripts
     
     public class PlayerCameraController : MonoBehaviour
     {
-        public PlayerController playerController;
-    
-        public float mouseSen = 1000f;
-        public float rotAmount = 2f;
-
-        public Animator camAnim;
-    
-        public Transform playerBody;
+        [SerializeField] PlayerController playerController;
 
         private float _xRotation = 0f;
+        
         private static readonly int Walk = Animator.StringToHash("walk");
         private static readonly int Idle = Animator.StringToHash("idle");
         private static readonly int Sprint = Animator.StringToHash("sprint");
@@ -39,19 +33,15 @@ namespace PlayerScripts
         {
             CameraRot();
             CameraBob();
-        
-            // Time.deltaTime gets time between updates, this here helps prevents faster sensitivity due to higher frame rates
-            float mouseX = Input.GetAxis("Mouse X") * mouseSen * Time.deltaTime; 
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSen * Time.deltaTime;
-        
+
             // Restrict mouseY rotation to not go upside down
-            _xRotation -= mouseY;
+            _xRotation -= playerController.MouseY;
             _xRotation = Math.Clamp(_xRotation, -90f, 90f);
         
             // Move camera accordingly
             Vector3 v = transform.rotation.eulerAngles;
             transform.localRotation = Quaternion.Euler(_xRotation, 0, v.z);
-            playerBody.Rotate(Vector3.up * mouseX);
+            playerController.player.transform.Rotate(Vector3.up * playerController.MouseX);
         
         }
 
@@ -59,7 +49,7 @@ namespace PlayerScripts
         void CameraRot()
         {
             // Tilt camera left or right upon movement
-            float rotZ = -Input.GetAxis("Horizontal") * rotAmount;
+            float rotZ = -Input.GetAxis("Horizontal") * playerController.camRotAmount;
         
             Quaternion finalRot = Quaternion.Euler(0, 0, rotZ);
             transform.localRotation = Quaternion.Lerp(transform.localRotation, finalRot, 1f);
@@ -70,27 +60,26 @@ namespace PlayerScripts
         void CameraBob()
         {
             // Bob camera up and down when moving depending on type of movement (using animation)
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+            if (playerController.Moving)
             {
-                if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) &&
-                    (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl)))
+                if (playerController.Sprinting && !playerController.Crouching)
                 {
-                    camAnim.ResetTrigger(Idle);
-                    camAnim.SetTrigger(Sprint);
+                    playerController.camAnim.ResetTrigger(Idle);
+                    playerController.camAnim.SetTrigger(Sprint);
                 }
                 else
                 {
-                    camAnim.ResetTrigger(Idle);
-                    camAnim.ResetTrigger(Walk);
-                    camAnim.SetTrigger(Walk);
+                    playerController.camAnim.ResetTrigger(Idle);
+                    playerController.camAnim.ResetTrigger(Walk);
+                    playerController.camAnim.SetTrigger(Walk);
 
                 }
             }
             else
             {
-                camAnim.ResetTrigger(Walk);
-                camAnim.ResetTrigger(Sprint);
-                camAnim.SetTrigger(Idle);
+                playerController.camAnim.ResetTrigger(Walk);
+                playerController.camAnim.ResetTrigger(Sprint);
+                playerController.camAnim.SetTrigger(Idle);
             }
 
         }

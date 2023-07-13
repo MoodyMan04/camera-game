@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Moody 20230712
-// Code inspired by work at the NDSU chapter of the ACM
+// Code taken / inspired by work at the NDSU chapter of the ACM
 /*
 * This class acts as a class that controls all other player scripts
 */
@@ -10,22 +10,54 @@ namespace PlayerScripts
 {
     public class PlayerController : MonoBehaviour
     {
+        // Variables
         public static PlayerController Instance;
 
         [Header("Internal Classes")]
-        // [SerializeField] internal PlayerInputController inputController;
+        [SerializeField] internal PlayerInputController inputController;
         [SerializeField] internal PlayerMovementController movementController;
         [SerializeField] internal PlayerCameraController cameraController;
         [SerializeField] internal CharacterController charController;
         [SerializeField] internal GameObject groundCheck;
 
         [Header("External Classes")] 
-        [SerializeField] internal Camera mainCamera;
+        public GameObject player;
+        public GameObject cameraHolder;
 
-        [Header("Variables (Local)")]
-        // [SerializeField]'s
+        [Header("Variables (Local)")] 
+        [SerializeField] internal LayerMask mapMask;
+        [SerializeField] internal LayerMask interactableMask;
+        [SerializeField] internal float mouseSens = 1000f;
+        [SerializeField] internal float groundDistance = 0.4f;
+        [SerializeField] internal float camRotAmount = 2f;
+        [SerializeField] internal float defaultSpeed = 4f;
+        [SerializeField] internal float sprintSpeed = 8f;
+        [SerializeField] internal float crouchSpeed = 2f;
+        [SerializeField] internal float stamina = 100f;
+        [SerializeField] internal float staminaDrainSpeed = 0.25f;
+        [SerializeField] internal float staminaRecoverySpeed = 0.50f;
+        [SerializeField] internal float standingHeight = 2f;
+        [SerializeField] internal float crouchHeight = 1f;
+        [SerializeField] internal float crouchTransitionSpeed = 10f;
+        [SerializeField] internal float gravity = -15f;
+        [SerializeField] internal float interactRange = 5f;
+        [SerializeField] internal float playerHealth = 100f;
 
-        internal bool Sprinting;
+        [Header("Animation")] 
+        [SerializeField] internal Animator camAnim;
+
+        internal float MouseX;
+        internal float MouseY;
+        internal float HorizontalMove;
+        internal float VerticalMove;
+        internal float Speed;
+        internal float Height
+        {
+            get => charController.height;
+            set => charController.height = value;
+        }
+        internal bool Sprinting = false;
+        internal bool Crouching = false;
         internal bool Moving;
         internal bool Grounded;
     
@@ -44,7 +76,7 @@ namespace PlayerScripts
         // Update is called once per frame
         void Update()
         {
-            // inputController.getInput();
+            inputController.GetInput();
             movementController.MovePlayer();
             cameraController.MoveCamera();
         }

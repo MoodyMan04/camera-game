@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 
 // Moody 20230712
-// Code taken / inspired by Brackeys and work at the NDSU chapter of the ACM
+// Code taken / inspired by Brackeys, a multitude of other youtubers, and work at the NDSU chapter of the ACM
 /*
 * Class to implement the ability to move the player as a first person player
 */
@@ -10,84 +11,110 @@ namespace PlayerScripts
 {
     public class PlayerMovementController : MonoBehaviour
     {
-        public CharacterController controller;
-        public PlayerController playerController;
+        // Variables
+        [SerializeField] PlayerController playerController;
+        
 
-        public float defaultSpeed = 4f;
-        public float sprintSpeed = 8f;
-        public float crouchSpeed = 2f;
-        public float crouchHeight = 1f;     
-        public float gravity = -15f;
-        public float speed = 4f;            // Do not adjust manually
-        public float defaultHeight = 2f;  // Number should match character controller set height
-
-
-        public Transform groundCheck;
-        public float groundDistance = 0.4f;
-        public LayerMask groundMask;
-
+        private Vector3 _initialCameraPos;
+        
+        private float _currentHeight;
         private Vector3 _velocity;
-        private bool _isGrounded;
-        private bool _sprinting;
-        private bool _crouching;
+        private Vector3 _move;
+        
+        private bool IsCrouching => playerController.standingHeight - _currentHeight > .1f;
+
+        // Start is called before the first frame update
+        private void Start()
+        {
+            _initialCameraPos = playerController.cameraHolder.transform.localPosition;
+        }
 
         // Method called by PlayerController in Update Method
         internal void MovePlayer()
         {
-
-            // Check to see if player is on a surface
-            _isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
-            if (_isGrounded && _velocity.y < 0)
+            Grounded();
+            LocationMove();
+            ActionType();
+            SmoothCrouch();
+            Move();
+        }
+        
+        // Method for checking if player is on ground
+        private void Grounded()
+        {
+            playerController.Grounded = Physics.CheckSphere(playerController.groundCheck.transform.position, playerController.groundDistance, playerController.mapMask);
+            if (playerController.Grounded && _velocity.y < 0)
             {
                 _velocity.y = -2f;
             }
+        }
         
-            float x = Input.GetAxis("Horizontal");
-            float z = Input.GetAxis("Vertical");
-        
-            // Get location to move to based on player direction and location
-            Vector3 move = (transform.right * x + transform.forward * z);
-            if (move.magnitude > 1.0f)
+        // Method for getting location to move to
+        private void LocationMove()
+        {
+            _move = (transform.right * playerController.HorizontalMove + transform.forward * playerController.VerticalMove);
+            if (_move.magnitude > 1.0f)
             {
-                move = move.normalized;
+                _move = _move.normalized;
+            }
+        }
+        
+        // Method for deciding on action of player and change speed if needed
+        private void ActionType()
+        {
+            // Check if sprinting, crouching, or neither
+            if (playerController.Sprinting && !playerController.Crouching)
+            {
+                // Logic for sprint stamina
+                // INSERT STAMINA LOGIC HERE
+                playerController.Speed = playerController.sprintSpeed;
+            }
+            else if (!playerController.Sprinting && playerController.Crouching)
+                playerController.Speed = playerController.crouchSpeed;
+            else if (!playerController.Crouching && !playerController.Sprinting)
+                playerController.Speed = playerController.defaultSpeed;
+        }
+        
+        // Method for smooth crouch logic
+        private void SmoothCrouch()
+        {
+            // Get height target to reach
+            var heightTarget = playerController.Crouching ? playerController.crouchHeight : playerController.standingHeight;
+
+            // If trying to un-crouch, first see if possible. If not, continue crouching 
+            if (IsCrouching && !playerController.Crouching)
+            {
+                var castOrigin = transform.position + new Vector3(0, _currentHeight / 2, 0);
+                if (Physics.Raycast(castOrigin, Vector3.up, out RaycastHit hit, 0.2f))
+                {
+                    var distanceToCeiling = hit.point.y - castOrigin.y;
+                    heightTarget = Mathf.Max(_currentHeight + distanceToCeiling - 0.1f, playerController.crouchHeight);
+                }
             }
 
-            // Check if shift button is pressed. If so, sprint
-            if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)) && _crouching == false)
+            // If height target is already the current height, skip
+            if (!Mathf.Approximately(heightTarget, _currentHeight))
             {
-                speed = sprintSpeed;
-                _sprinting = true;
-            }
+                // Smooth transition to crouching / un-crouching
+                var crouchDelta = playerController.crouchTransitionSpeed * Time.deltaTime;
+                _currentHeight = Mathf.Lerp(_currentHeight, heightTarget, crouchDelta);
 
-            if ((Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)) && _crouching == false)
-            {
-                speed = defaultSpeed;
-                _sprinting = false;
-            }
-        
-            // Check if control button is pressed. If so, crouch
-            if ((Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)) && _sprinting == false)
-            {
-                speed = crouchSpeed;
-                controller.height = crouchHeight;
-                _crouching = true;
-            }
+                var halfHeightDiff = new Vector3(0, (playerController.standingHeight - _currentHeight) / 2, 0);
+                var newCameraPos = _initialCameraPos - halfHeightDiff;
 
-            if ((Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl)) && _sprinting == false)
-            {
-                speed = defaultSpeed;
-                controller.height = defaultHeight;
-                _crouching = false;
+                playerController.Height = _currentHeight;
             }
+        }
         
-            // Move player
-            controller.Move(move * (speed * Time.deltaTime));
+        // Method for moving player
+        private void Move()
+        {
+            playerController.charController.Move(_move * (playerController.Speed * Time.deltaTime));
 
             // Move player with gravity if falling accordingly
-            _velocity.y += gravity * Time.deltaTime;
+            _velocity.y += playerController.gravity * Time.deltaTime;
 
-            controller.Move(_velocity * Time.deltaTime);
+            playerController.charController.Move(_velocity * Time.deltaTime);
         }
     }
 }
