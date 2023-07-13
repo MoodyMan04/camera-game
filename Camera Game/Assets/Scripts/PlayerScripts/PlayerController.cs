@@ -33,10 +33,11 @@ namespace PlayerScripts
         [SerializeField] internal float camRotAmount = 2f;
         [SerializeField] internal float defaultSpeed = 4f;
         [SerializeField] internal float sprintSpeed = 8f;
-        [SerializeField] internal float crouchSpeed = 2f;
+        [SerializeField] internal float crouchSpeed = 1.5f;
         [SerializeField] internal float maxStamina = 100f;
         [SerializeField] internal float staminaDrain = 0.05f;
         [SerializeField] internal float staminaRecovery = 0.5f;
+        [SerializeField] internal float staminaRecoveryCrouching = 0.75f;
         [SerializeField] internal float standingHeight = 2f;
         [SerializeField] internal float crouchHeight = 1f;
         [SerializeField] internal float crouchTransitionSpeed = 10f;
@@ -60,6 +61,7 @@ namespace PlayerScripts
         }
         internal bool Sprinting = false;
         internal bool Crouching = false;
+        internal bool StaminaEmpty = false;
         internal bool Moving;
         internal bool Grounded;
     
@@ -81,6 +83,7 @@ namespace PlayerScripts
             inputController.GetInput();
             movementController.MovePlayer();
             cameraController.MoveCamera();
+            staminaBar.DisplayStamina();
         }
     }
 }

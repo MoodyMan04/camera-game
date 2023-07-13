@@ -53,7 +53,7 @@ namespace PlayerScripts
             float rotZ = -Input.GetAxis("Horizontal") * playerController.camRotAmount;
         
             Quaternion finalRot = Quaternion.Euler(0, 0, rotZ);
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, finalRot, 1f);
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, finalRot, 5f * Time.deltaTime);
         
         }
 

@@ -61,20 +61,19 @@ namespace PlayerScripts
         // Method for deciding on action of player and change speed if needed
         private void ActionType()
         {
+            // Set speed to default
+            playerController.Speed = playerController.defaultSpeed;
+            
             // Check if sprinting, crouching, or neither
-            if (playerController.Sprinting && !playerController.Crouching)
+            if (playerController.Sprinting && !playerController.Crouching && !playerController.StaminaEmpty && playerController.Moving)
             {
-                // Use stamina
+                // Use stamina when running
                 playerController.staminaBar.UseStamina();
                 playerController.Speed = playerController.sprintSpeed;
             }
             else if (!playerController.Sprinting && playerController.Crouching)
             {
                 playerController.Speed = playerController.crouchSpeed;
-            }
-            else if (!playerController.Crouching && !playerController.Sprinting)
-            {
-                playerController.Speed = playerController.defaultSpeed;
             }
         }
         
