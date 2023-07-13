@@ -12,6 +12,7 @@ namespace PlayerScripts
     
     public class PlayerCameraController : MonoBehaviour
     {
+        // Variables
         [SerializeField] PlayerController playerController;
 
         private float _xRotation = 0f;

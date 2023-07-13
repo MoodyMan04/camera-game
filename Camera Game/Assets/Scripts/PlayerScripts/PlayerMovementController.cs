@@ -13,7 +13,6 @@ namespace PlayerScripts
     {
         // Variables
         [SerializeField] PlayerController playerController;
-        
 
         private Vector3 _initialCameraPos;
         
@@ -65,14 +64,18 @@ namespace PlayerScripts
             // Check if sprinting, crouching, or neither
             if (playerController.Sprinting && !playerController.Crouching)
             {
-                // Logic for sprint stamina
-                // INSERT STAMINA LOGIC HERE
+                // Use stamina
+                playerController.staminaBar.UseStamina();
                 playerController.Speed = playerController.sprintSpeed;
             }
             else if (!playerController.Sprinting && playerController.Crouching)
+            {
                 playerController.Speed = playerController.crouchSpeed;
+            }
             else if (!playerController.Crouching && !playerController.Sprinting)
+            {
                 playerController.Speed = playerController.defaultSpeed;
+            }
         }
         
         // Method for smooth crouch logic

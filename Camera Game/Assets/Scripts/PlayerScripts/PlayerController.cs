@@ -18,6 +18,7 @@ namespace PlayerScripts
         [SerializeField] internal PlayerMovementController movementController;
         [SerializeField] internal PlayerCameraController cameraController;
         [SerializeField] internal CharacterController charController;
+        [SerializeField] internal PlayerStaminaBar staminaBar;
         [SerializeField] internal GameObject groundCheck;
 
         [Header("External Classes")] 
@@ -33,9 +34,9 @@ namespace PlayerScripts
         [SerializeField] internal float defaultSpeed = 4f;
         [SerializeField] internal float sprintSpeed = 8f;
         [SerializeField] internal float crouchSpeed = 2f;
-        [SerializeField] internal float stamina = 100f;
-        [SerializeField] internal float staminaDrainSpeed = 0.25f;
-        [SerializeField] internal float staminaRecoverySpeed = 0.50f;
+        [SerializeField] internal float maxStamina = 100f;
+        [SerializeField] internal float staminaDrain = 0.05f;
+        [SerializeField] internal float staminaRecovery = 0.5f;
         [SerializeField] internal float standingHeight = 2f;
         [SerializeField] internal float crouchHeight = 1f;
         [SerializeField] internal float crouchTransitionSpeed = 10f;
@@ -51,6 +52,7 @@ namespace PlayerScripts
         internal float HorizontalMove;
         internal float VerticalMove;
         internal float Speed;
+        internal float Stamina;
         internal float Height
         {
             get => charController.height;
