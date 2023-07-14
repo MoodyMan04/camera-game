@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace PlayerScripts
 {
-    public class PlayerStaminaBar : MonoBehaviour
+    public class PlayerStaminaController : MonoBehaviour
     {
         // Variables
         [SerializeField] PlayerController playerController;
@@ -21,7 +21,7 @@ namespace PlayerScripts
         
         public Slider staminaBar;
 
-        public static PlayerStaminaBar Instance;
+        public static PlayerStaminaController Instance;
 
         private WaitForSeconds _regenTick = new(0.05f);
         private Coroutine _regen;

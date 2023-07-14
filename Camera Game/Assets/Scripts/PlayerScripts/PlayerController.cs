@@ -18,7 +18,7 @@ namespace PlayerScripts
         [SerializeField] internal PlayerMovementController movementController;
         [SerializeField] internal PlayerCameraController cameraController;
         [SerializeField] internal CharacterController charController;
-        [SerializeField] internal PlayerStaminaBar staminaBar;
+        [SerializeField] internal PlayerStaminaController staminaBar;
         [SerializeField] internal GameObject groundCheck;
 
         [Header("External Classes")] 
@@ -52,6 +52,7 @@ namespace PlayerScripts
         internal float MouseY;
         internal float HorizontalMove;
         internal float VerticalMove;
+        internal float Health;
         internal float Speed;
         internal float Stamina;
         internal float Height
