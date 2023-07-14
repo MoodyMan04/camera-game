@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Moody 20230712
+// Moody 20230714
 // Code taken / inspired by work at the NDSU chapter of the ACM
 /*
 * This class acts as a class that controls all other player scripts
@@ -17,6 +17,7 @@ namespace PlayerScripts
         [SerializeField] internal PlayerInputController inputController;
         [SerializeField] internal PlayerMovementController movementController;
         [SerializeField] internal PlayerCameraController cameraController;
+        [SerializeField] internal PlayerInteractController interactController;
         [SerializeField] internal CharacterController charController;
         [SerializeField] internal PlayerStaminaController staminaBar;
         [SerializeField] internal GameObject groundCheck;
@@ -42,7 +43,7 @@ namespace PlayerScripts
         [SerializeField] internal float crouchHeight = 1f;
         [SerializeField] internal float crouchTransitionSpeed = 10f;
         [SerializeField] internal float gravity = -15f;
-        [SerializeField] internal float interactRange = 5f;
+        [SerializeField] internal float interactRange = 2f;
         [SerializeField] internal float playerHealth = 100f;
 
         [Header("Animation")] 
@@ -62,6 +63,7 @@ namespace PlayerScripts
         }
         internal bool Sprinting = false;
         internal bool Crouching = false;
+        internal bool Interacting = false;
         internal bool StaminaEmpty = false;
         internal bool Moving;
         internal bool Grounded;
@@ -85,6 +87,7 @@ namespace PlayerScripts
             movementController.MovePlayer();
             cameraController.MoveCamera();
             staminaBar.DisplayStamina();
+            interactController.Interactable();
         }
     }
 }

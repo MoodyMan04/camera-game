@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-// Moody 20230712
+// Moody 20230713
 // Code taken / inspired by Brackeys, a multitude of other youtubers, and work at the NDSU chapter of the ACM
 /*
 * Class to implement the ability to move the player as a first person player

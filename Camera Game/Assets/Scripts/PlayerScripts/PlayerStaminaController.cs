@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Moody 20230712
+// Moody 20230713
 // Code inspired by Comp-3 Interactive
 /*
  * Class to implement the stamina bar for the player

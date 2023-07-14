@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Moody 20230712
+// Moody 20230713
 // Code taken / inspired by work done in the NDSU chapter of the ACM
 /*
  * Class used to register input from mouse and keyboard for interacting with the player controllers 
@@ -49,6 +49,8 @@ namespace PlayerScripts
                 playerController.Crouching = Input.GetButton("Crouch");
                 _crouching = playerController.Crouching;
             }
+
+            playerController.Interacting = Input.GetButton("Interact");
 
         }
     }
