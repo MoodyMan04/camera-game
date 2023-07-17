@@ -15,7 +15,7 @@ namespace PlayerScripts
         // Variables
         [SerializeField] PlayerController playerController;
         [SerializeField] Image interactImage;
-        
+
         // Method called by PlayerController in Update Method
         internal void Interactable()
         {
@@ -33,6 +33,9 @@ namespace PlayerScripts
                         hit.collider.GetComponent<InteractTest>().OnInteract();
                     if(hit.collider.GetComponent<InteractTest2>() != null)
                         hit.collider.GetComponent<InteractTest2>().OnInteract();
+                    if(hit.collider.GetComponent<InteractCameraItem>() != null)
+                        hit.collider.GetComponent<InteractCameraItem>().OnInteract();
+                    
                     
                 }
             }

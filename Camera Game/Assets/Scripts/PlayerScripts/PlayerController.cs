@@ -65,6 +65,7 @@ namespace PlayerScripts
         internal float Health;
         internal float Speed;
         internal float Stamina;
+        internal float Noise;
         internal float Height
         {
             get => charController.height;

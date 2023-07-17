@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-// Moody 20230713
+// Moody 20230717
 // Code taken / inspired by Brackeys, a multitude of other youtubers, and work at the NDSU chapter of the ACM
 /*
 * Class to implement the ability to move the player as a first person player
@@ -61,18 +61,20 @@ namespace PlayerScripts
         // Method for deciding on action of player and change speed if needed
         private void ActionType()
         {
-            // Set speed to default
+            // Set defaults
+            playerController.Noise = playerController.defaultNoiseRadius;
             playerController.Speed = playerController.defaultSpeed;
             
             // Check if sprinting, crouching, or neither
             if (playerController.Sprinting && !playerController.Crouching && !playerController.StaminaEmpty && playerController.Moving)
             {
-                // Use stamina when running
                 playerController.staminaBar.UseStamina();
+                playerController.Noise = playerController.sprintNoiseRadius;
                 playerController.Speed = playerController.sprintSpeed;
             }
             else if (!playerController.Sprinting && playerController.Crouching)
             {
+                playerController.Noise = playerController.crouchNoiseRadius;
                 playerController.Speed = playerController.crouchSpeed;
             }
         }
