@@ -1,7 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using PlayerScripts;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 // Moody 20230717
 /*
@@ -17,6 +21,11 @@ namespace ItemScripts
         
         [Header("External Classes")] 
         [SerializeField] PlayerController playerController;
+
+        [Header("UI Variables")] 
+        [SerializeField] GameObject uiVHS;
+        [SerializeField] Slider zoomSlider;
+        [SerializeField] Image zoomBorder;
         
         [Header("Variables (Local)")]
         [SerializeField] float maxBatteryLife = 100f;
@@ -31,8 +40,13 @@ namespace ItemScripts
         internal float Zoom;
         internal bool CanUseCamera = false;
         internal bool CameraInUse = false;
+        internal bool Zooming;
 
         private Camera _camera;
+        private Volume _cameraVolume;
+        
+        private GameObject _vhsFilter;
+        private Vector3 _vhsFilterDefaultScale;
         
         private float _timer = 0f;
         private float _defaultCameraFOV;
@@ -53,8 +67,13 @@ namespace ItemScripts
             BatteryLife = maxBatteryLife;
             Zoom = 1f;
 
+            _vhsFilter = GameObject.Find("VHS");
+            _vhsFilterDefaultScale = _vhsFilter.transform.localScale;
+
             if (Camera.main != null) _camera = Camera.main;
             _defaultCameraFOV = _camera.fieldOfView;
+
+            _cameraVolume = _camera.GetComponent<Volume>();
         }
 
         // Update is called once per frame
@@ -62,6 +81,7 @@ namespace ItemScripts
         {
             GetCameraInput();
             ZoomCamera();
+            CameraFilterUI();
         }
 
         // Method to get input needed to control camera item (Called in CameraItemController Update Method)
@@ -78,7 +98,7 @@ namespace ItemScripts
                 if (CameraInUse)
                 {
                     Zoom += Input.mouseScrollDelta.y * zoomScale;
-                    
+
                     if (Zoom > maxZoom)
                         Zoom = maxZoom;
                     if (Zoom < minZoom)
@@ -114,25 +134,53 @@ namespace ItemScripts
         {
             if (CameraInUse)
             {
-                // Get target FOV for camera
+                // Get target FOV for camera as well as target scale for VHS cube filter in front of camera
                 float targetFOV = _defaultCameraFOV / Zoom;
+                float targetFilterX = _vhsFilterDefaultScale.x / Zoom;
+                float targetFilterY = _vhsFilterDefaultScale.y / Zoom;
+                Vector3 targetLocalScale = new Vector3(targetFilterX, targetFilterY, _vhsFilter.transform.localScale.z);
 
                 // If camera just opened, jump to current camera FOV without smooth transition
                 if (_cameraFirstTurnedOn)
                 {
                     _camera.fieldOfView = targetFOV;
-                    _cameraFirstTurnedOn = false;
+                    _vhsFilter.transform.localScale = targetLocalScale;
+                        _cameraFirstTurnedOn = false;
                     return;
                 }
                 
                 // Otherwise, when in camera mode, smooth transition in zoom
                 _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, targetFOV, 8f * Time.deltaTime);
+                _vhsFilter.transform.localScale = Vector2.Lerp(_vhsFilter.transform.localScale, targetLocalScale,
+                    5f * Time.deltaTime);
             }
             else
             {
                 _camera.fieldOfView = _defaultCameraFOV;
+                _vhsFilter.transform.localScale = _vhsFilterDefaultScale;
                 _cameraFirstTurnedOn = true;
             }
+        }
+        
+        // Method to control camera filters and UI
+        private void CameraFilterUI()
+        {
+            if (CameraInUse)
+            {
+                float targetSliderValue = (Zoom - minZoom) / (maxZoom - minZoom);
+                zoomSlider.value = Mathf.Lerp(zoomSlider.value, targetSliderValue, 8f * Time.deltaTime);
+                
+                _cameraVolume.enabled = true;
+                _vhsFilter.SetActive(true);
+                uiVHS.SetActive(true);
+            }
+            else
+            {
+                _cameraVolume.enabled = false;
+                _vhsFilter.SetActive(false);
+                uiVHS.SetActive(false);
+            }
+
         }
     }
 }
