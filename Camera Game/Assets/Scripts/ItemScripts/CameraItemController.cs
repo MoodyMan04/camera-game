@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
-// Moody 20230717
+// Moody 20230718
 /*
  * Class to implement the VHS camera item
  */
@@ -67,7 +67,7 @@ namespace ItemScripts
             BatteryLife = maxBatteryLife;
             Zoom = 1f;
 
-            _vhsFilter = GameObject.Find("VHS");
+            _vhsFilter = GameObject.Find("VHS Filter");
             _vhsFilterDefaultScale = _vhsFilter.transform.localScale;
 
             if (Camera.main != null) _camera = Camera.main;
@@ -134,25 +134,19 @@ namespace ItemScripts
         {
             if (CameraInUse)
             {
-                // Get target FOV for camera as well as target scale for VHS cube filter in front of camera
+                // Get target FOV for camera
                 float targetFOV = _defaultCameraFOV / Zoom;
-                float targetFilterX = _vhsFilterDefaultScale.x / Zoom;
-                float targetFilterY = _vhsFilterDefaultScale.y / Zoom;
-                Vector3 targetLocalScale = new Vector3(targetFilterX, targetFilterY, _vhsFilter.transform.localScale.z);
 
                 // If camera just opened, jump to current camera FOV without smooth transition
                 if (_cameraFirstTurnedOn)
                 {
                     _camera.fieldOfView = targetFOV;
-                    _vhsFilter.transform.localScale = targetLocalScale;
                         _cameraFirstTurnedOn = false;
                     return;
                 }
                 
                 // Otherwise, when in camera mode, smooth transition in zoom
                 _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, targetFOV, 8f * Time.deltaTime);
-                _vhsFilter.transform.localScale = Vector2.Lerp(_vhsFilter.transform.localScale, targetLocalScale,
-                    5f * Time.deltaTime);
             }
             else
             {
