@@ -1,6 +1,7 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
-// Moody 20230714
+// Moody 20230717
 // Code taken / inspired by work at the NDSU chapter of the ACM
 /*
 * This class acts as a class that controls all other player scripts
@@ -18,8 +19,8 @@ namespace PlayerScripts
         [SerializeField] internal PlayerMovementController movementController;
         [SerializeField] internal PlayerCameraController cameraController;
         [SerializeField] internal PlayerInteractController interactController;
-        [SerializeField] internal CharacterController charController;
         [SerializeField] internal PlayerStaminaController staminaBar;
+        [SerializeField] internal CharacterController charController;
         [SerializeField] internal GameObject groundCheck;
 
         [Header("External Classes")] 
@@ -27,24 +28,32 @@ namespace PlayerScripts
         public GameObject cameraHolder;
 
         [Header("Variables (Local)")] 
+        [Header("Masks")]
         [SerializeField] internal LayerMask mapMask;
         [SerializeField] internal LayerMask interactableMask;
+        [Header(("Control Settings"))]
         [SerializeField] internal float mouseSens = 1000f;
         [SerializeField] internal float groundDistance = 0.4f;
         [SerializeField] internal float camRotAmount = 2f;
+        [Header("World Settings")]
+        [SerializeField] internal float gravity = -15f;
+        [Header("Player Settings")]
+        [SerializeField] internal float standingHeight = 2f;
+        [SerializeField] internal float crouchHeight = 1f;
+        [SerializeField] internal float interactRange = 2f;
         [SerializeField] internal float defaultSpeed = 4f;
         [SerializeField] internal float sprintSpeed = 8f;
         [SerializeField] internal float crouchSpeed = 1.5f;
+        [SerializeField] internal float defaultNoiseRadius = 4f;
+        [SerializeField] internal float sprintNoiseRadius = 8f;
+        [SerializeField] internal float crouchNoiseRadius = 2f;
         [SerializeField] internal float maxStamina = 100f;
         [SerializeField] internal float staminaDrain = 0.05f;
         [SerializeField] internal float staminaRecovery = 0.5f;
         [SerializeField] internal float staminaRecoveryCrouching = 0.75f;
-        [SerializeField] internal float standingHeight = 2f;
-        [SerializeField] internal float crouchHeight = 1f;
         [SerializeField] internal float crouchTransitionSpeed = 10f;
-        [SerializeField] internal float gravity = -15f;
-        [SerializeField] internal float interactRange = 2f;
         [SerializeField] internal float playerHealth = 100f;
+        
 
         [Header("Animation")] 
         [SerializeField] internal Animator camAnim;
@@ -56,11 +65,13 @@ namespace PlayerScripts
         internal float Health;
         internal float Speed;
         internal float Stamina;
+        internal float Noise;
         internal float Height
         {
             get => charController.height;
             set => charController.height = value;
         }
+        internal bool CanInput = true;
         internal bool Sprinting = false;
         internal bool Crouching = false;
         internal bool Interacting = false;
