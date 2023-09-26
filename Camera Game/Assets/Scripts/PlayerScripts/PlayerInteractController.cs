@@ -26,17 +26,11 @@ namespace PlayerScripts
                 interactImage.enabled = true;
                 
                 // Check if we are interacting
-                if (playerController.Interacting)
+                if (!playerController.Interacting) return;
+                // Check if what we are interacting with can be interacted with
+                if (hit.collider.GetComponent<INteractable>() != null)
                 {
-                    // Check what is being interacted with (PLACE ALL POSSIBLE INTERACTIONS HERE) ~ should be better way to do this (expensive)
-                    if (hit.collider.GetComponent<InteractTest>() != null)
-                        hit.collider.GetComponent<InteractTest>().OnInteract();
-                    if(hit.collider.GetComponent<InteractTest2>() != null)
-                        hit.collider.GetComponent<InteractTest2>().OnInteract();
-                    if(hit.collider.GetComponent<InteractCameraItem>() != null)
-                        hit.collider.GetComponent<InteractCameraItem>().OnInteract();
-                    
-                    
+                    hit.collider.GetComponent<INteractable>().OnInteract();
                 }
             }
             else

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace InteractionScripts
 {
-    public class InteractCameraItem : MonoBehaviour
+    public class InteractCameraItem : MonoBehaviour, INteractable
     {
         // Variables
         [SerializeField] CameraItemController cameraItem;
