@@ -1,2 +1,2 @@
 # camera-game
-Repository for unity game about camera
+Unity game about finding an old VHS camera in a mysterious place (Still in heavy development)
